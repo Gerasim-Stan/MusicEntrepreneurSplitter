@@ -22,17 +22,17 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
         self.resize(1030, 530)
         self.move(200, 100)
-        self.mainImage = sys.path[0][:-4] + '/files/backgroundForPlayer.jpg'
+        self.mainImage = sys.path[0][:-4] + "/files/backgroundForPlayer.jpg"
         palette = QPalette()
         palette.setBrush(QPalette.Background, QBrush(QPixmap(self.mainImage)))
         self.setPalette(palette)
-        self.setWindowTitle('Music Entrepreneur Splitter')
+        self.setWindowTitle("Music Entrepreneur Splitter")
         self.songLength = 0
         self.addTime = 0
         self.saveDirectory = ""
-        self.playImagePath = sys.path[0][:-4] + '/files/play.png'
-        self.pauseImagePath = sys.path[0][:-4] + '/files/pause.png'
-        self.stopImagePath = sys.path[0][:-4] + '/files/stop.png'
+        self.playImagePath = sys.path[0][:-4] + "/files/play.png"
+        self.pauseImagePath = sys.path[0][:-4] + "/files/pause.png"
+        self.stopImagePath = sys.path[0][:-4] + "/files/stop.png"
 
         self.addLullingPartWidget = LullingPartWidget(self)
         self.addCutEndWidget = CutEndWidget(self)
@@ -118,7 +118,7 @@ class OpenFileWidget(QWidget):
         super(OpenFileWidget, self).__init__(parent)
         self.setGeometry(100, 445, 90, 60)
         self.layout = QVBoxLayout(self)
-        self.openFileButton = QPushButton('Add', self)
+        self.openFileButton = QPushButton("Add", self)
         self.openFileButton.setSizePolicy(QSizePolicy.Expanding,
                                           QSizePolicy.Expanding)
         self.openFileButton.clicked.connect(
@@ -187,7 +187,7 @@ class TuneListWidget(QListWidget):
         """Provides tools to load a file into the tunes list"""
         file = str(QFileDialog.getOpenFileName(
                    self, "Pick mp3 file", "", "*.mp3"))
-        if file is None or file == "":
+        if file == "":
             return
         for i in range(len(self.fileNames)):
             if self.fileNames[i + 1] == file:
@@ -195,9 +195,9 @@ class TuneListWidget(QListWidget):
                                   "File with such name is already added")
                 return
         self.fileNames[len(self.fileNames) + 1] = file
-        songName = str(self.fileNames[len(self.fileNames)]).split('/')[-1]
+        songName = str(self.fileNames[len(self.fileNames)]).split("/")[-1]
         item = QListWidgetItem(self)
-        item.setText(str(len(self.fileNames)) + '. ' + songName[0:-4])
+        item.setText(str(len(self.fileNames)) + ". " + songName[0:-4])
 
     def openTrackFromList(self):
         """Plays a double-clicked file from the tunes list and
@@ -211,7 +211,7 @@ class TuneListWidget(QListWidget):
             QIcon(self.parent.pauseImagePath))
         self.parent.songLength = mainPlayer.getLength()
 
-        matplotlib.use('TkAgg')
+        matplotlib.use("TkAgg")
         pylab.plot(mainPlayer.soundToArray(
             filePath=self.fileNames[int(self.currentItem().text()[0:1])]),
             "b-")
@@ -244,11 +244,11 @@ class TuneListWidget(QListWidget):
 
     def runTimer(self):
         """Sets value for the timer"""
-        if mainPlayer.main_mixer.music.get_pos() < 0:
+        if mainPlayer.mainMixer.music.get_pos() < 0:
             return
-        positionLength = len(str(mainPlayer.main_mixer.music.get_pos()))
+        positionLength = len(str(mainPlayer.mainMixer.music.get_pos()))
         timerValue = float(str(
-            mainPlayer.main_mixer.music.get_pos()/1000)
+            mainPlayer.mainMixer.music.get_pos()/1000)
             [:positionLength - 1]) + float(self.parent.addTime)
         self.parent.addTimerWidget.timerLabel.setText(str(timerValue))
         if timerValue >= self.parent.songLength:
@@ -356,7 +356,7 @@ class CutButtonWidget(QWidget):
             wrongCut = True
         if wrongCut:
             QMessageBox.about(self, "Warning",
-                              "This value is outside of the boundaries")
+                              "This value is outside of boundaries")
             return
 
         if self.parent.saveDirectory == "":
@@ -364,11 +364,11 @@ class CutButtonWidget(QWidget):
                 self, "Select directory to save files"))
         if self.parent.saveDirectory == "":
             return
-        songWritePath = self.parent.saveDirectory + "/"
-        songWritePath += self.parent.addTuneListWidget.currentItem().text()
+        songWritePath = self.parent.saveDirectory + "/" +\
+            self.parent.addTuneListWidget.currentItem().text()[3:]
         self.startLulling = self.parent.addLullingPartWidget.startLulling
         self.endLulling = self.parent.addLullingPartWidget.endLulling
-        mainPlayer.cut(starting_p=startBox, ending_p=endBox,
+        mainPlayer.cut(startingPos=startBox, endingPos=endBox,
                        filePathAndName=songWritePath,
                        startLulling=self.startLulling,
                        endLulling=self.endLulling)
@@ -451,14 +451,27 @@ class ConcatenateTunesWidget(QWidget):
                               "You have to input at least 1 file")
             return
         self.listSize = self.parent.addTuneListWidget.count()
-        self.pickLeftTune = int(QInputDialog.getText(
-            self, "Pick tune", "Select the number of the 'left' tune")[0])
+        self.pickLeftTune = QInputDialog.getText(
+            self, "Pick tune", "Select the number of the 'left' tune")[0]
+        if self.pickLeftTune.isdigit():
+            self.pickLeftTune = int(self.pickLeftTune)
+        else:
+            QMessageBox.about(self, "Warning",
+                              "You have to input number")
+            return
         if self.pickLeftTune > len(self.fileNames) or self.pickLeftTune < 1:
             QMessageBox.about(self, "Warning",
                               "This is not a number from the list")
             return
-        self.pickRightTune = int(QInputDialog.getText(
-            self, "Pick tune", "Select the number of the 'right' tune")[0])
+
+        self.pickRightTune = QInputDialog.getText(
+            self, "Pick tune", "Select the number of the 'right' tune")[0]
+        if self.pickRightTune.isdigit():
+            self.pickRightTune = int(self.pickRightTune)
+        else:
+            QMessageBox.about(self, "Warning",
+                              "You have to input number")
+            return
         if self.pickRightTune > len(self.fileNames) or self.pickRightTune < 1:
             QMessageBox.about(self, "Warning",
                               "This is not a number from the list")
@@ -467,11 +480,13 @@ class ConcatenateTunesWidget(QWidget):
         if self.parent.saveDirectory == "":
             self.parent.saveDirectory = str(QFileDialog.getExistingDirectory(
                 self, "Select directory to save files"))
+        if self.parent.saveDirectory == "":
+            return
         songWritePath = self.parent.saveDirectory + "/"
         songWritePath += self.fileNames[
-            self.pickLeftTune].split('/')[-1][:-4] + " + "
+            self.pickLeftTune].split("/")[-1][:-4] + " + "
         songWritePath += self.fileNames[
-            self.pickRightTune].split('/')[-1][:-4]
+            self.pickRightTune].split("/")[-1][:-4]
 
         mainPlayer.concat(
             self.fileNames[self.pickLeftTune],
