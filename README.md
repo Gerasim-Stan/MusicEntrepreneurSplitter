@@ -1,13 +1,36 @@
 MusicEntrepreneurSplitter
 =========================
+Project goals
+---
+This project is about creating an environment for playing and editing music. It consists modules for:
 
-Project will implement the following functions:
+* Playing tunes.
+* Cutting tunes.
+* Adding or removing tunes to a list for manipulation.
+* Concatenating tunes from the list.
+* Cutting tunes from the list.
+* Lulling start or end (~ 4 secs) of the tune, that's about to be cut.
+* Tool for drawing graphics of the played tune (in GUI).
 
-1. Concatenating tunes.
-2. Cutting tunes.
-3. Adding or removing tunes (mp3 files from folder as DB).
-4. Lulling start or end of a tune (about 4 secs).
-5. GUI (not yet defined).
-6. The Algorithm - it will analyze the frequency. I have some ideas about using the extracted information, but I've not decided, yet. It will be used for visualization (as equalizer), or for splitting the tunes in groups, depending on the average beats per second.
+All these functions are packed in sufficient GUI.
 
-I'll write the algorithm 'till the next milestone. After that, I'll try to deal with some of the other stuff. But for now - the algorithm. I'll try to provide some scheme or plan for my next steps 'till end of the second milestone.
+The music player implements "mixer" module from pygame, and is named "pymplayer". For cutting, concatenating, and lulling, is used pydub. For drawing are used numerous libraries, including matplotlib, numpy, scipy, and wand.
+
+For user interface's been used PyQt4 - QtGui and QtCore. The initial view consists of (empty) list of tunes, timer, sliders for volume control and track position control, textboxes for input of place to start and end cutting, buttons for play/pause, stop, importing tunes to list, turning on/off lulling effect in the beginning or the end, concatenating, and cutting. After playing tune from list, a graphic is being generated and showed inside the window.
+
+Project Dependencies
+--------------------
+* [Python 3](https://www.python.org/) *(or later)*
+* [Pygame](http://www.pygame.org/news.html)
+* [Pydub] (https://github.com/jiaaro/pydub)
+* [NumPy] (http://www.numpy.org/)
+* [SciPy] (http://www.scipy.org/)
+* [Matplotlib] (http://matplotlib.org/)
+* [Wand] (http://docs.wand-py.org/en/0.3.8/)
+* [PyQt4] (http://www.riverbankcomputing.co.uk/software/pyqt/intro)
+
+License
+-------
+The project falls under [GNU General Public License *(version 3)*](http://choosealicense.com/licenses/gpl-3.0/)
+
+[License to use Python](https://docs.python.org/3/license.html#terms-and-conditions-for-accessing-or-otherwise-using-python)
