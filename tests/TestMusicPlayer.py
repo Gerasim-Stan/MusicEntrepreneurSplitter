@@ -51,7 +51,3 @@ class TestMusicPlayer(unittest.TestCase):
         testMixer.importFile(self.testFilePath)
         self.assertTrue(testMixer.soundToArray(
             filePath=self.testFilePath).size)
-
-
-tmt = TestMusicPlayer()
-tmt.testStopSong()
