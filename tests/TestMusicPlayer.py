@@ -11,9 +11,9 @@ class TestMusicPlayer(unittest.TestCase):
         "/files/Halogen - Length and Brecht Synaecide Remix.mp3"
 
     def testImportSong(self):
-        testMixer = pymplayer.MusicPlayer()
+        testMixer = MusicPlayer()
         testMixer.importFile(self.testFilePath)
-        self.assertTrue(testMixer.sound_path != '')
+        self.assertTrue(testMixer.soundPath != '')
 
     def testPlaySong(self):
         self.assertFalse(MusicPlayer().play())  # Before import.
@@ -33,7 +33,7 @@ class TestMusicPlayer(unittest.TestCase):
     def testCutting(self):
         testMixer = MusicPlayer()
         testMixer.importFile(self.testFilePath)
-        testMixer.cut(starting_p=0, ending_p=10,
+        testMixer.cut(startingPos=0, endingPos=10,
                       filePathAndName=self.testFilePath[:-4],
                       startLulling=False, endLulling=False)
         assert os.path.exists(self.testFilePath[:-4] + " (Splitted).mp3")
