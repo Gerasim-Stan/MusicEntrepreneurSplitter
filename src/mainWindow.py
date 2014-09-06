@@ -19,10 +19,10 @@ class MainWindow(QMainWindow):
        and instantiates other objects for the GUI.
     """
     def __init__(self, parent=None):
-        super(mainWindow, self).__init__(parent)
+        super(MainWindow, self).__init__(parent)
         self.resize(1030, 530)
         self.move(200, 100)
-        self.mainImage = sys.path[0] + '/files/backgroundForPlayer.jpg'
+        self.mainImage = sys.path[0][:-4] + '/files/backgroundForPlayer.jpg'
         palette = QPalette()
         palette.setBrush(QPalette.Background, QBrush(QPixmap(self.mainImage)))
         self.setPalette(palette)
@@ -30,9 +30,9 @@ class MainWindow(QMainWindow):
         self.songLength = 0
         self.addTime = 0
         self.saveDirectory = ""
-        self.playImagePath = sys.path[0] + '/files/play.png'
-        self.pauseImagePath = sys.path[0] + '/files/pause.png'
-        self.stopImagePath = sys.path[0] + '/files/stop.png'
+        self.playImagePath = sys.path[0][:-4] + '/files/play.png'
+        self.pauseImagePath = sys.path[0][:-4] + '/files/pause.png'
+        self.stopImagePath = sys.path[0][:-4] + '/files/stop.png'
 
         self.addLullingPartWidget = LullingPartWidget(self)
         self.addCutEndWidget = CutEndWidget(self)
@@ -54,7 +54,7 @@ class PlayButtonWidget(QWidget):
 
     def __init__(self, parent):
 
-        super(playButtonWidget, self).__init__(parent)
+        super(PlayButtonWidget, self).__init__(parent)
         self.setGeometry(0, 340, 120, 100)
         self.layout = QVBoxLayout(self)
         self.playButton = QPushButton(self)
@@ -88,7 +88,7 @@ class StopButtonWidget(QWidget):
     """Defines behaviour for stop button"""
     def __init__(self, parent):
 
-        super(stopButtonWidget, self).__init__(parent)
+        super(StopButtonWidget, self).__init__(parent)
         self.setGeometry(105, 340, 120, 100)
         self.layout = QVBoxLayout(self)
         self.stopButton = QPushButton(self)
@@ -107,22 +107,22 @@ class StopButtonWidget(QWidget):
         self.parent.addPlayButtonWidget.playButton.setIcon(
             QIcon(self.parent.playImagePath))
         mainPlayer.stop()
-        if hasattr(self.parent.addBoxLayout, "timer"):
-            self.parent.addBoxLayout.timer.stop()
+        if hasattr(self.parent.addTuneListWidget, "timer"):
+            self.parent.addTuneListWidget.timer.stop()
 
 
 class OpenFileWidget(QWidget):
     """Define view for button, used for loading of files"""
     def __init__(self, parent):
 
-        super(openFileWidget, self).__init__(parent)
+        super(OpenFileWidget, self).__init__(parent)
         self.setGeometry(100, 445, 90, 60)
         self.layout = QVBoxLayout(self)
         self.openFileButton = QPushButton('Add', self)
         self.openFileButton.setSizePolicy(QSizePolicy.Expanding,
                                           QSizePolicy.Expanding)
         self.openFileButton.clicked.connect(
-            parent.addBoxLayout.searchAndOpenFile)
+            parent.addTuneListWidget.searchAndOpenFile)
         self.openFileButton.setStyleSheet(
             "QPushButton { font: 14pt; font-weight:420;}")
         self.show()
@@ -133,7 +133,7 @@ class SoundSliderWidget(QWidget):
     """Defines view and behaviour of slider for volume control"""
     def __init__(self, parent):
 
-        super(soundSliderWidget, self).__init__(parent)
+        super(SoundSliderWidget, self).__init__(parent)
         self.layout = QVBoxLayout(self)
         self.setGeometry(746, 330, 100, 200)
         self.slider = QSlider(Qt.Vertical, self)
@@ -158,7 +158,7 @@ class TuneListWidget(QListWidget):
     fileNames = {}
 
     def __init__(self, parent):
-        super(List, self).__init__(parent)
+        super(TuneListWidget, self).__init__(parent)
         self.setGeometry(810, 7, 214, 520)
         self.parent = parent
         self.slider = QSlider(Qt.Horizontal, self.parent)
@@ -215,20 +215,20 @@ class TuneListWidget(QListWidget):
         pylab.plot(mainPlayer.soundToArray(
             filePath=self.fileNames[int(self.currentItem().text()[0:1])]),
             "b-")
-        pylab.savefig(sys.path[0] + "/files/image.png")
-        pltImage = scipy.ndimage.imread(sys.path[0] + "/files/image.png")
+        pylab.savefig(sys.path[0][:-4] + "/files/image.png")
+        pltImage = scipy.ndimage.imread(sys.path[0][:-4] + "/files/image.png")
         croppedImage = pltImage[65: 535, 100: 715]
-        plt.imsave(sys.path[0] + "/files/image.png", croppedImage)
-        image = Image.Image(filename=sys.path[0] + "/files/image.png")
+        plt.imsave(sys.path[0][:-4] + "/files/image.png", croppedImage)
+        image = Image.Image(filename=sys.path[0][:-4] + "/files/image.png")
         image.resize(800, 300)
-        image.save(filename=sys.path[0] + "/files/image.png")
+        image.save(filename=sys.path[0][:-4] + "/files/image.png")
 
         self.diagram = QLabel(self.parent)
         self.diagram.setGeometry(0, 0, 800, 300)
-        self.diagram.setPixmap(QPixmap(sys.path[0] + "/files/image.png"))
+        self.diagram.setPixmap(QPixmap(sys.path[0][:-4] + "/files/image.png"))
         self.diagram.repaint()
         self.diagram.show()
-        os.remove(sys.path[0] + "/files/image.png")
+        os.remove(sys.path[0][:-4] + "/files/image.png")
         pylab.close()
         self.parent.addCutEndWidget.endBox.setText(
             str("%.2f" % (self.parent.songLength - 0.01)))
@@ -268,7 +268,7 @@ class TuneListWidget(QListWidget):
 class TimerWidget(QWidget):
     """Defines view for timer widget"""
     def __init__(self, parent):
-        super(timerWidget, self).__init__(parent)
+        super(TimerWidget, self).__init__(parent)
         self.setGeometry(0, 450, 100, 50)
         self.layout = QVBoxLayout(self)
         self.timerLabel = QLabel(self)
@@ -284,7 +284,7 @@ class TimerWidget(QWidget):
 class CutStartWidget(QWidget):
     """Defines view for textbox to input starting position for cut"""
     def __init__(self, parent):
-        super(cutStartWidget, self).__init__(parent)
+        super(CutStartWidget, self).__init__(parent)
         self.setGeometry(220, 340, 100, 50)
         self.layout = QVBoxLayout(self)
         self.startBox = QLineEdit(self)
@@ -300,7 +300,7 @@ class CutStartWidget(QWidget):
 class CutEndWidget(QWidget):
     """Defines view for textbox to input ending position for cut"""
     def __init__(self, parent):
-        super(cutEndWidget, self).__init__(parent)
+        super(CutEndWidget, self).__init__(parent)
         self.setGeometry(310, 340, 100, 50)
         self.layout = QVBoxLayout(self)
         self.endBox = QLineEdit(self)
@@ -322,7 +322,7 @@ class CutButtonWidget(QWidget):
        Saves the file in folder by choice.
     """
     def __init__(self, parent):
-        super(cutButtonWidget, self).__init__(parent)
+        super(CutButtonWidget, self).__init__(parent)
         self.setGeometry(430, 350, 120, 70)
         self.layout = QVBoxLayout(self)
         self.cutButton = QPushButton("Cut!", self)
@@ -365,7 +365,7 @@ class CutButtonWidget(QWidget):
         if self.parent.saveDirectory == "":
             return
         songWritePath = self.parent.saveDirectory + "/"
-        songWritePath += self.parent.addBoxLayout.currentItem().text()
+        songWritePath += self.parent.addTuneListWidget.currentItem().text()
         self.startLulling = self.parent.addLullingPartWidget.startLulling
         self.endLulling = self.parent.addLullingPartWidget.endLulling
         mainPlayer.cut(starting_p=startBox, ending_p=endBox,
@@ -445,12 +445,12 @@ class ConcatenateTunesWidget(QWidget):
            Two QMessageBox-es take the indexes (from list) of tunes,
            then performs the concatenation and saves the result.
         """
-        self.fileNames = self.parent.addBoxLayout.fileNames
+        self.fileNames = self.parent.addTuneListWidget.fileNames
         if len(self.fileNames) < 1:
             QMessageBox.about(self, "Warning",
                               "You have to input at least 1 file")
             return
-        self.listSize = self.parent.addBoxLayout.count()
+        self.listSize = self.parent.addTuneListWidget.count()
         self.pickLeftTune = int(QInputDialog.getText(
             self, "Pick tune", "Select the number of the 'left' tune")[0])
         if self.pickLeftTune > len(self.fileNames) or self.pickLeftTune < 1:

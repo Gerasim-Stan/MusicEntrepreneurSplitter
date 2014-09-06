@@ -1,20 +1,57 @@
 import unittest
+import sys
+import os
+sys.path.append(sys.path[0][:-6] + "/src")
 from pymplayer import MusicPlayer
+import numpy as np
+
 
 class TestMusicPlayer(unittest.TestCase):
+    testFilePath = sys.path[0][:-6] +\
+        "/files/Halogen - Length and Brecht Synaecide Remix.mp3"
 
-    def test_import_song(self):
-        test_mixer = MusicPlayer()
-        self.assertTrue(test_mixer._import_file("/home/geroy/Music/Loup/Lupe Fiasco - Mission (CDQ).mp3"))
+    def testImportSong(self):
+        testMixer = pymplayer.MusicPlayer()
+        testMixer.importFile(self.testFilePath)
+        self.assertTrue(testMixer.sound_path != '')
 
-    def test_play_song(self):
-        self.assertFalse(MusicPlayer()._play()) #Before import.
-        test_mixer = MusicPlayer()
-        test_mixer._import_file("/home/geroy/Music/Loup/Lupe Fiasco - Mission (CDQ).mp3")
-        self.assertTrue(test_mixer._play())
+    def testPlaySong(self):
+        self.assertFalse(MusicPlayer().play())  # Before import.
+        testMixer = MusicPlayer()
+        testMixer.importFile(self.testFilePath)
+        testMixer.stop()
+        testMixer.play()
+        self.assertTrue(testMixer.getCond() == 1)
 
-    def test_pause_song_no_import(self):
-        self.assertFalse(MusicPlayer()._pause())
+    def testStopSong(self):
+        testMixer = MusicPlayer()
+        testMixer.importFile(self.testFilePath)
+        testMixer.play()
+        testMixer.stop()
+        self.assertTrue(testMixer.getCond() == 0)
 
-    def test_unpause_song_no_import(self):
-        self.assertFalse(MusicPlayer()._unpause())
+    def testCutting(self):
+        testMixer = MusicPlayer()
+        testMixer.importFile(self.testFilePath)
+        testMixer.cut(starting_p=0, ending_p=10,
+                      filePathAndName=self.testFilePath[:-4],
+                      startLulling=False, endLulling=False)
+        assert os.path.exists(self.testFilePath[:-4] + " (Splitted).mp3")
+
+    def testConcatenating(self):
+        testMixer = MusicPlayer()
+        testMixer.importFile(self.testFilePath)
+        testMixer.concat(leftTune=self.testFilePath,
+                         rightTune=self.testFilePath,
+                         songWritePath=self.testFilePath[:-4])
+        assert os.path.exists(self.testFilePath[:-4] + " (Concatenated).mp3")
+
+    def testNumpyArrayGeneration(self):
+        testMixer = MusicPlayer()
+        testMixer.importFile(self.testFilePath)
+        self.assertTrue(testMixer.soundToArray(
+            filePath=self.testFilePath).size)
+
+
+tmt = TestMusicPlayer()
+tmt.testStopSong()
